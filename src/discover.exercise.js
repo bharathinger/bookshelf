@@ -7,6 +7,7 @@ import {FaSearch} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
 import {useEffect, useState} from 'react'
+import {client} from 'utils/api-client.exercise'
 
 function DiscoverBooksScreen() {
   const [query, setQuery] = useState('')
@@ -19,17 +20,10 @@ function DiscoverBooksScreen() {
       return
     }
     setStatus('loading')
-    window
-      .fetch(
-        `${process.env.REACT_APP_API_URL}/books?query=${encodeURIComponent(
-          query,
-        )}`,
-      )
-      .then(response => response.json())
-      .then(data => {
-        setData(data)
-        setStatus('success')
-      })
+    client(`books?query=${encodeURIComponent(query)}`).then(data => {
+      setData(data)
+      setStatus('success')
+    })
   }, [queried, query])
 
   // 🐨 replace these with derived state values based on the status.
