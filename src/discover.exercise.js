@@ -3,32 +3,41 @@ import {jsx} from '@emotion/core'
 
 import './bootstrap'
 import Tooltip from '@reach/tooltip'
-import {FaSearch} from 'react-icons/fa'
+import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
 import {useEffect, useState} from 'react'
 import {client} from 'utils/api-client.exercise'
+import * as colors from './styles/colors'
 
 function DiscoverBooksScreen() {
   const [query, setQuery] = useState('')
   const [queried, setQueried] = useState(false)
   const [status, setStatus] = useState('idle')
   const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!queried) {
       return
     }
     setStatus('loading')
-    client(`books?query=${encodeURIComponent(query)}`).then(data => {
-      setData(data)
-      setStatus('success')
-    })
+    client(`books?query=${encodeURIComponent(query)}`).then(
+      data => {
+        setData(data)
+        setStatus('success')
+      },
+      error => {
+        setError(error)
+        setStatus('error')
+      },
+    )
   }, [queried, query])
 
   // 🐨 replace these with derived state values based on the status.
   const isLoading = status === 'loading'
   const isSuccess = status === 'success'
+  const isError = status === 'error'
 
   function handleSearchSubmit(event) {
     event.preventDefault()
@@ -57,12 +66,28 @@ function DiscoverBooksScreen() {
                 background: 'transparent',
               }}
             >
-              {isLoading ? <Spinner /> : <FaSearch aria-label="search" />}
+              {isLoading ? (
+                <Spinner />
+              ) : isError ? (
+                <FaTimes aria-label="error" css={{color: colors.danger}} />
+              ) : (
+                <FaSearch aria-label="search" />
+              )}
             </button>
           </label>
         </Tooltip>
       </form>
 
+      {isError ? (
+        <div
+          css={{
+            color: colors.danger,
+          }}
+        >
+          <p>There was an error:</p>
+          <pre>{error.message}</pre>
+        </div>
+      ) : null}
       {isSuccess ? (
         data?.books?.length ? (
           <BookListUL css={{marginTop: 20}}>
