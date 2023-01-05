@@ -6,6 +6,9 @@ import * as auth from 'auth-provider'
 import {AuthenticatedApp} from './authenticated-app'
 import {UnauthenticatedApp} from './unauthenticated-app'
 import {client} from './utils/api-client'
+import {useAsync} from './utils/hooks'
+import {FullPageSpinner} from './components/lib'
+import * as colors from './styles/colors'
 
 const getUser = async () => {
   let user = null
@@ -18,24 +21,48 @@ const getUser = async () => {
 }
 
 function App() {
-  const [user, setUser] = React.useState(null)
-  const login = form => auth.login(form).then(userData => setUser(userData))
+  const {
+    data: user,
+    isIdle,
+    isLoading,
+    isSuccess,
+    isError,
+    setData,
+    error,
+    run,
+  } = useAsync()
+  const login = form => auth.login(form).then(userData => setData(userData))
   const register = form =>
-    auth.register(form).then(userData => setUser(userData))
+    auth.register(form).then(userData => setData(userData))
   const logout = () => {
     auth.logout()
-    setUser(null)
+    setData(null)
   }
 
   React.useEffect(() => {
-    getUser().then(userData => setUser(userData))
-  }, [])
+    run(getUser())
+  }, [run])
 
-  return user ? (
-    <AuthenticatedApp user={user} logout={logout} />
-  ) : (
-    <UnauthenticatedApp login={login} register={register} />
-  )
+  if (isLoading || isIdle) {
+    return <FullPageSpinner />
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <p>Oh No. Looks like an error.</p>
+        <pre>{error.message}</pre>
+      </div>
+    )
+  }
+
+  if (isSuccess) {
+    return user ? (
+      <AuthenticatedApp user={user} logout={logout} />
+    ) : (
+      <UnauthenticatedApp login={login} register={register} />
+    )
+  }
 }
 
 export {App}
