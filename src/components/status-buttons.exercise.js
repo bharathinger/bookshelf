@@ -11,10 +11,12 @@ import {
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 // 🐨 you'll need useQuery, useMutation, and queryCache from 'react-query'
+import {useQuery, useMutation} from 'react-query'
 // 🐨 you'll also need client from 'utils/api-client'
 import {useAsync} from 'utils/hooks'
 import * as colors from 'styles/colors'
 import {CircleButton, Spinner} from './lib'
+import {client} from 'utils/api-client.exercise'
 
 function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   const {isLoading, isError, error, run} = useAsync()
@@ -71,6 +73,9 @@ function StatusButtons({user, book}) {
   // 🐨 call useMutation here and assign the mutate function to "create"
   // the mutate function should call the list-items endpoint with a POST
   // and the bookId the listItem is being created for.
+  const [create] = useMutation(({bookId}) => {
+    client('list-items', {data: {bookId}, token: user.token})
+  })
 
   return (
     <React.Fragment>
@@ -107,6 +112,7 @@ function StatusButtons({user, book}) {
           label="Add to list"
           highlight={colors.indigo}
           // 🐨 add an onClick here that calls create
+          onClick={() => create({bookId: book.id})}
           icon={<FaPlusCircle />}
         />
       )}
