@@ -81,6 +81,11 @@ function StatusButtons({user, book}) {
     {onSettled: () => queryCache.invalidateQueries('list-items')},
   )
 
+  const [remove] = useMutation(
+    ({id}) => client(`list-items/${id}`, {method: 'DELETE', token: user.token}),
+    {onSettled: () => queryCache.invalidateQueries('list-items')},
+  )
+
   return (
     <React.Fragment>
       {listItem ? (
@@ -109,6 +114,7 @@ function StatusButtons({user, book}) {
           label="Remove from list"
           highlight={colors.danger}
           // 🐨 add an onClick here that calls remove
+          onClick={() => remove({id: listItem.id})}
           icon={<FaMinusCircle />}
         />
       ) : (
