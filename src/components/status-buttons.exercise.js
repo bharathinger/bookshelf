@@ -69,6 +69,15 @@ function StatusButtons({user, book}) {
   // the mutate function should call the list-items/:listItemId endpoint with a PUT
   //   and the updates as data. The mutate function will be called with the updates
   //   you can pass as data.
+  const [update] = useMutation(
+    updates =>
+      client(`list-items/${updates.id}`, {
+        method: 'PUT',
+        token: user.token,
+        data: updates,
+      }),
+    {onSettled: () => queryCache.invalidateQueries('list-items')},
+  )
 
   // 🐨 call useMutation here and assign the mutate function to "remove"
   // the mutate function should call the list-items/:listItemId endpoint with a DELETE
@@ -96,6 +105,7 @@ function StatusButtons({user, book}) {
             // 🐨 add an onClick here that calls update with the data we want to update
             // 💰 to mark a list item as unread, set the finishDate to null
             // {id: listItem.id, finishDate: null}
+            onClick={() => update({id: listItem.id, finishDate: null})}
             icon={<FaBook />}
           />
         ) : (
@@ -105,6 +115,7 @@ function StatusButtons({user, book}) {
             // 🐨 add an onClick here that calls update with the data we want to update
             // 💰 to mark a list item as read, set the finishDate
             // {id: listItem.id, finishDate: Date.now()}
+            onClick={() => update({id: listItem.id, finishDate: Date.now()})}
             icon={<FaCheckCircle />}
           />
         )
