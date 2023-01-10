@@ -17,6 +17,7 @@ import {Textarea} from 'components/lib'
 import {Rating} from 'components/rating'
 import {StatusButtons} from 'components/status-buttons'
 import bookPlaceholderSvg from 'assets/book-placeholder.svg'
+import {useBookSearch} from 'utils/books'
 
 const loadingBook = {
   title: 'Loading...',
