@@ -11,7 +11,7 @@ import {client} from 'utils/api-client'
 import {formatDate} from 'utils/misc'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
-import {Textarea} from 'components/lib'
+import {Textarea, ErrorMessage} from 'components/lib'
 import {Rating} from 'components/rating'
 import {StatusButtons} from 'components/status-buttons'
 import {useBook} from 'utils/books'
@@ -115,7 +115,7 @@ function NotesTextarea({listItem, user}) {
   // then use the `onSettled` config option to queryCache.invalidateQueries('list-items')
   // 💣 DELETE THIS ESLINT IGNORE!! Don't ignore the exhaustive deps rule please
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const [mutate] = useUpdateListItem(user)
+  const [mutate, {error, isError}] = useUpdateListItem(user)
   const debouncedMutate = React.useMemo(
     () => debounceFn(mutate, {wait: 300}),
     [mutate],
@@ -140,7 +140,15 @@ function NotesTextarea({listItem, user}) {
         >
           Notes
         </label>
+        {isError ? (
+          <ErrorMessage
+            error={error}
+            variant={'inline'}
+            css={{fontSize: '0.7em', marginLeft: 6}}
+          />
+        ) : null}
       </div>
+
       <Textarea
         id="notes"
         defaultValue={listItem.notes}
