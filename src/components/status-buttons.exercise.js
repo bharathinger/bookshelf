@@ -17,7 +17,12 @@ import {useAsync} from 'utils/hooks'
 import * as colors from 'styles/colors'
 import {CircleButton, Spinner} from './lib'
 import {client} from 'utils/api-client.exercise'
-import {useListItem, useUpdateListItem} from 'utils/list-items'
+import {
+  useListItem,
+  useUpdateListItem,
+  useCreateListItem,
+  useRemoveListItem,
+} from 'utils/list-items'
 
 function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   const {isLoading, isError, error, run} = useAsync()
@@ -60,15 +65,9 @@ function StatusButtons({user, book}) {
   // 🐨 call useMutation here and assign the mutate function to "create"
   // the mutate function should call the list-items endpoint with a POST
   // and the bookId the listItem is being created for.
-  const [create] = useMutation(
-    ({bookId}) => client('list-items', {data: {bookId}, token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
+  const [create] = useCreateListItem(user)
 
-  const [remove] = useMutation(
-    ({id}) => client(`list-items/${id}`, {method: 'DELETE', token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
+  const [remove] = useRemoveListItem(user)
 
   return (
     <React.Fragment>
