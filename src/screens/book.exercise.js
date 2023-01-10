@@ -6,8 +6,6 @@ import debounceFn from 'debounce-fn'
 import {FaRegCalendarAlt} from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 import {useParams} from 'react-router-dom'
-// 🐨 you'll need these:
-import {useQuery, useMutation, queryCache} from 'react-query'
 import {useAsync} from 'utils/hooks'
 import {client} from 'utils/api-client'
 import {formatDate} from 'utils/misc'
@@ -17,17 +15,12 @@ import {Textarea} from 'components/lib'
 import {Rating} from 'components/rating'
 import {StatusButtons} from 'components/status-buttons'
 import {useBook} from 'utils/books'
+import {useUpdateListItem, useListItem} from 'utils/list-items.exercise'
 
 function BookScreen({user}) {
   const {bookId} = useParams()
   const book = useBook(bookId, user)
-  const {data: listItems} = useQuery({
-    queryKey: 'list-items',
-    queryFn: () =>
-      client('list-items', {token: user.token}).then(data => data.listItems),
-  })
-
-  const listItem = listItems?.find(item => item.bookId === bookId) ?? null
+  const listItem = useListItem(user, bookId)
   // 🦉 NOTE: the backend doesn't support getting a single list-item by it's ID
   // and instead expects us to cache all the list items and look them up in our
   // cache. This works out because we're using react-query for caching!
@@ -122,15 +115,7 @@ function NotesTextarea({listItem, user}) {
   // then use the `onSettled` config option to queryCache.invalidateQueries('list-items')
   // 💣 DELETE THIS ESLINT IGNORE!! Don't ignore the exhaustive deps rule please
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const [mutate] = useMutation(
-    updates =>
-      client(`list-items/${updates.id}`, {
-        method: 'PUT',
-        token: user.token,
-        data: updates,
-      }),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
+  const [mutate] = useUpdateListItem(user)
   const debouncedMutate = React.useMemo(
     () => debounceFn(mutate, {wait: 300}),
     [mutate],
