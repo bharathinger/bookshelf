@@ -16,7 +16,7 @@ import {useQuery, useMutation, queryCache} from 'react-query'
 import {useAsync} from 'utils/hooks'
 import * as colors from 'styles/colors'
 import {CircleButton, Spinner} from './lib'
-import {client} from 'utils/api-client.exercise'
+import {client} from 'utils/api-client'
 import {
   useListItem,
   useUpdateListItem,
@@ -25,10 +25,14 @@ import {
 } from 'utils/list-items'
 
 function TooltipButton({label, highlight, onClick, icon, ...rest}) {
-  const {isLoading, isError, error, run} = useAsync()
+  const {isLoading, isError, error, run, reset} = useAsync()
 
   function handleClick() {
-    run(onClick())
+    if (isError) {
+      reset()
+    } else {
+      run(onClick())
+    }
   }
 
   return (
@@ -57,17 +61,10 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
 
 function StatusButtons({user, book}) {
   const listItem = useListItem(user, book.id)
-  const [update] = useUpdateListItem(user)
 
-  // 🐨 call useMutation here and assign the mutate function to "remove"
-  // the mutate function should call the list-items/:listItemId endpoint with a DELETE
-
-  // 🐨 call useMutation here and assign the mutate function to "create"
-  // the mutate function should call the list-items endpoint with a POST
-  // and the bookId the listItem is being created for.
-  const [create] = useCreateListItem(user)
-
-  const [remove] = useRemoveListItem(user)
+  const [update] = useUpdateListItem(user, {throwOnError: true})
+  const [create] = useCreateListItem(user, {throwOnError: true})
+  const [remove] = useRemoveListItem(user, {throwOnError: true})
 
   return (
     <React.Fragment>
