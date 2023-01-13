@@ -5,7 +5,7 @@ import * as React from 'react'
 import Tooltip from '@reach/tooltip'
 import { FaSearch, FaTimes } from 'react-icons/fa'
 // 🐨 swap refetchBookSearchQuery with the new useRefetchBookSearchQuery
-import { useBookSearch, refetchBookSearchQuery } from 'utils/books'
+import { useBookSearch, useRefetchBookSearchQuery } from 'utils/books'
 import * as colors from 'styles/colors'
 import { BookRow } from 'components/book-row'
 import { BookListUL, Spinner, Input } from 'components/lib'
@@ -21,12 +21,13 @@ function DiscoverBooksScreen() {
   const { books, error, status } = useBookSearch(query)
   // 🐨 use the new useRefetchBookSearchQuery to get the
   // refetchBookSearchQuery function which handles accessing the user
+  const refetchBookSearchQuery = useRefetchBookSearchQuery()
 
   React.useEffect(() => {
     // 💣 remove the user prop here
     return () => refetchBookSearchQuery()
     // 💣 remove the user dependency here and add refetchBookSearchQuery instead
-  }, [])
+  }, [refetchBookSearchQuery])
 
   const isLoading = status === 'loading'
   const isSuccess = status === 'success'
