@@ -7,13 +7,12 @@ import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib'
 import * as mq from './styles/media-queries'
 import * as colors from './styles/colors'
 // 🐨 get AuthContext from ./context/auth-context
-import { AuthContext } from './context/auth-context'
+import { useAuth } from './context/auth-context'
 import { ReadingListScreen } from './screens/reading-list'
 import { FinishedScreen } from './screens/finished'
 import { DiscoverBooksScreen } from './screens/discover'
 import { BookScreen } from './screens/book'
 import { NotFoundScreen } from './screens/not-found'
-import { useContext } from 'react'
 
 function ErrorFallback({ error }) {
   return (
@@ -34,7 +33,7 @@ function ErrorFallback({ error }) {
 // 💣 remove the props
 function AuthenticatedApp() {
   // 🐨 get user and logout function from AuthContext using useContext
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout } = useAuth()
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div
