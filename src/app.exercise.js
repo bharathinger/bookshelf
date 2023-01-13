@@ -61,7 +61,7 @@ function App() {
       <AuthContext.Provider value={props} >
         {user ? (
           <Router>
-            <AuthenticatedApp {...props} />
+            <AuthenticatedApp />
           </Router>
         )
           :

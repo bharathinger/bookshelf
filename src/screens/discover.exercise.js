@@ -9,9 +9,12 @@ import { useBookSearch, refetchBookSearchQuery } from 'utils/books'
 import * as colors from 'styles/colors'
 import { BookRow } from 'components/book-row'
 import { BookListUL, Spinner, Input } from 'components/lib'
+import { useContext } from 'react'
+import { AuthContext } from 'context/auth-context'
 
 // 💣 remove the user prop here
-function DiscoverBooksScreen({ user }) {
+function DiscoverBooksScreen() {
+  const { user } = useContext(AuthContext)
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
   // 💣 remove the user argument here
@@ -21,9 +24,9 @@ function DiscoverBooksScreen({ user }) {
 
   React.useEffect(() => {
     // 💣 remove the user prop here
-    return () => refetchBookSearchQuery(user)
+    return () => refetchBookSearchQuery()
     // 💣 remove the user dependency here and add refetchBookSearchQuery instead
-  }, [user])
+  }, [])
 
   const isLoading = status === 'loading'
   const isSuccess = status === 'success'
