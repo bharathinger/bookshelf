@@ -1,7 +1,9 @@
 // 🐨 we're going to use React hooks in here now so we'll need React
-import {useQuery, queryCache} from 'react-query'
+import React, { useContext } from 'react'
+import { useQuery, queryCache } from 'react-query'
 // 🐨 get AuthContext from context/auth-context
-import {client} from './api-client'
+import { AuthContext } from 'context/auth-context'
+import { client } from './api-client'
 import bookPlaceholderSvg from 'assets/book-placeholder.svg'
 
 const loadingBook = {
@@ -13,7 +15,7 @@ const loadingBook = {
   loadingBook: true,
 }
 
-const loadingBooks = Array.from({length: 10}, (v, index) => ({
+const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
   id: `loading-book-${index}`,
   ...loadingBook,
 }))
@@ -21,7 +23,7 @@ const loadingBooks = Array.from({length: 10}, (v, index) => ({
 // 🦉 note that this is *not* treated as a hook and is instead called by other hooks
 // So we'll continue to accept the user here.
 const getBookSearchConfig = (query, user) => ({
-  queryKey: ['bookSearch', {query}],
+  queryKey: ['bookSearch', { query }],
   queryFn: () =>
     client(`books?query=${encodeURIComponent(query)}`, {
       token: user.token,
@@ -36,19 +38,21 @@ const getBookSearchConfig = (query, user) => ({
 })
 
 // 💣 remove the user argument here
-function useBookSearch(query, user) {
+function useBookSearch(query) {
   // 🐨 get the user from React.useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   const result = useQuery(getBookSearchConfig(query, user))
-  return {...result, books: result.data ?? loadingBooks}
+  return { ...result, books: result.data ?? loadingBooks }
 }
 
 // 💣 remove the user argument here
-function useBook(bookId, user) {
+function useBook(bookId) {
   // 🐨 get the user from React.useContext(AuthContext)
-  const {data} = useQuery({
-    queryKey: ['book', {bookId}],
+  const { user } = useContext(AuthContext)
+  const { data } = useQuery({
+    queryKey: ['book', { bookId }],
     queryFn: () =>
-      client(`books/${bookId}`, {token: user.token}).then(data => data.book),
+      client(`books/${bookId}`, { token: user.token }).then(data => data.book),
   })
   return data ?? loadingBook
 }
@@ -72,7 +76,7 @@ const bookQueryConfig = {
 }
 
 function setQueryDataForBook(book) {
-  queryCache.setQueryData(['book', {bookId: book.id}], book, bookQueryConfig)
+  queryCache.setQueryData(['book', { bookId: book.id }], book, bookQueryConfig)
 }
 
-export {useBook, useBookSearch, refetchBookSearchQuery, setQueryDataForBook}
+export { useBook, useBookSearch, refetchBookSearchQuery, setQueryDataForBook }
