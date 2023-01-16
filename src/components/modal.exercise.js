@@ -13,6 +13,8 @@ const ModalContext = React.createContext();
 // and renders the ModalContext.Provider with the value which will pass the
 // isOpen state and setIsOpen function
 
+const callAll = (...fns) => (...args) => fns.forEach(fn => fn && fn(...args))
+
 function Modal(props) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -31,7 +33,7 @@ function Modal(props) {
 function ModalDismissButton({ children: child }) {
   const [, setIsOpen] = React.useContext(ModalContext)
   return React.cloneElement(child, {
-    onClick: () => setIsOpen(false)
+    onClick: callAll(() => setIsOpen(false), child.props.onClick)
   })
 }
 // 🐨 create a ModalOpenButton component which is effectively the same thing as
@@ -40,7 +42,7 @@ function ModalDismissButton({ children: child }) {
 function ModalOpenButton({ children: child }) {
   const [, setIsOpen] = React.useContext(ModalContext)
   return React.cloneElement(child, {
-    onClick: () => setIsOpen(true)
+    onClick: callAll(() => setIsOpen(true), child.props.onClick)
   })
 }
 
