@@ -1,19 +1,19 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core'
 
-import {Routes, Route, Link as RouterLink, useMatch} from 'react-router-dom'
-import {ErrorBoundary} from 'react-error-boundary'
-import {Button, ErrorMessage, FullPageErrorFallback} from './components/lib'
+import { Routes, Route, Link as RouterLink, useMatch } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary'
+import { Button, ErrorMessage, FullPageErrorFallback } from './components/lib'
 import * as mq from './styles/media-queries'
 import * as colors from './styles/colors'
-import {useAuth} from './context/auth-context'
-import {ReadingListScreen} from './screens/reading-list'
-import {FinishedScreen} from './screens/finished'
-import {DiscoverBooksScreen} from './screens/discover'
-import {BookScreen} from './screens/book'
-import {NotFoundScreen} from './screens/not-found'
+import { useAuth } from './context/auth-context'
+import { ReadingListScreen } from './screens/reading-list'
+import { FinishedScreen } from './screens/finished'
+import { DiscoverBooksScreen } from './screens/discover'
+import { BookScreen } from './screens/book'
+import { NotFoundScreen } from './screens/not-found'
 
-function ErrorFallback({error}) {
+function ErrorFallback({ error }) {
   return (
     <ErrorMessage
       error={error}
@@ -29,7 +29,7 @@ function ErrorFallback({error}) {
 }
 
 function AuthenticatedApp() {
-  const {user, logout} = useAuth()
+  const { user, logout } = useAuth()
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div
@@ -42,7 +42,7 @@ function AuthenticatedApp() {
         }}
       >
         {user.username}
-        <Button variant="secondary" css={{marginLeft: '10px'}} onClick={logout}>
+        <Button variant="secondary" css={{ marginLeft: '10px' }} onClick={logout}>
           Logout
         </Button>
       </div>
@@ -62,10 +62,10 @@ function AuthenticatedApp() {
           },
         }}
       >
-        <div css={{position: 'relative'}}>
+        <div css={{ position: 'relative' }}>
           <Nav />
         </div>
-        <main css={{width: '100%'}}>
+        <main css={{ width: '100%' }}>
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <AppRoutes />
           </ErrorBoundary>
@@ -97,12 +97,12 @@ function NavLink(props) {
         },
         match
           ? {
-              borderLeft: `5px solid ${colors.indigo}`,
+            borderLeft: `5px solid ${colors.indigo}`,
+            background: colors.gray10,
+            ':hover': {
               background: colors.gray10,
-              ':hover': {
-                background: colors.gray10,
-              },
-            }
+            },
+          }
           : null,
       ]}
       {...props}
@@ -158,7 +158,7 @@ function AppRoutes() {
 }
 
 // 🐨 change this to a default export
-export {AuthenticatedApp}
+export default AuthenticatedApp
 
 // 🐨 Unfortunately, to make this work for our workshop,
 // you need to add this to src/authenticated-app.js:

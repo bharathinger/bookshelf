@@ -1,18 +1,18 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core'
 
 import * as React from 'react'
-import {Input, Button, Spinner, FormGroup, ErrorMessage} from './components/lib'
-import {Modal, ModalContents, ModalOpenButton} from './components/modal'
-import {Logo} from './components/logo'
-import {useAuth} from './context/auth-context'
-import {useAsync} from './utils/hooks'
+import { Input, Button, Spinner, FormGroup, ErrorMessage } from './components/lib'
+import { Modal, ModalContents, ModalOpenButton } from './components/modal'
+import { Logo } from './components/logo'
+import { useAuth } from './context/auth-context'
+import { useAsync } from './utils/hooks'
 
-function LoginForm({onSubmit, submitButton}) {
-  const {isLoading, isError, error, run} = useAsync()
+function LoginForm({ onSubmit, submitButton }) {
+  const { isLoading, isError, error, run } = useAsync()
   function handleSubmit(event) {
     event.preventDefault()
-    const {username, password} = event.target.elements
+    const { username, password } = event.target.elements
 
     run(
       onSubmit({
@@ -47,11 +47,11 @@ function LoginForm({onSubmit, submitButton}) {
       <div>
         {React.cloneElement(
           submitButton,
-          {type: 'submit'},
+          { type: 'submit' },
           ...(Array.isArray(submitButton.props.children)
             ? submitButton.props.children
             : [submitButton.props.children]),
-          isLoading ? <Spinner css={{marginLeft: 5}} /> : null,
+          isLoading ? <Spinner css={{ marginLeft: 5 }} /> : null,
         )}
       </div>
       {isError ? <ErrorMessage error={error} /> : null}
@@ -60,7 +60,7 @@ function LoginForm({onSubmit, submitButton}) {
 }
 
 function UnauthenticatedApp() {
-  const {login, register} = useAuth()
+  const { login, register } = useAuth()
   return (
     <div
       css={{
@@ -109,7 +109,7 @@ function UnauthenticatedApp() {
 }
 
 // 🐨 change this to a default export
-export {UnauthenticatedApp}
+export default UnauthenticatedApp
 
 // 🐨 Unfortunately, to make this work for our workshop,
 // you need to add this to src/unauthenticated-app.js:
