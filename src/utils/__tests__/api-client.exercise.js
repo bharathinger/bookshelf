@@ -43,7 +43,23 @@ test('adds auth token when a token is provided', async () => {
 // 🐨 call the client with the token (note that it's async)
 // 🐨 verify that `request.headers.get('Authorization')` is correct (it should include the token)
 
-test('allows for config overrides', () => { })
+test('allows for config overrides', async () => {
+  const endpoint = 'test-endpoint'
+  const mockResult = { mockValue: 'VALUE' }
+  const customConfig = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'fake type'
+    }
+  }
+  let request
+  server.use(rest.put(`${apiURL}/${endpoint}`, async (req, res, ctx) => {
+    request = req;
+    return res(ctx.json(mockResult))
+  }))
+  await client(endpoint, customConfig)
+  expect(request.headers.get('Content-Type')).toBe(customConfig.headers['Content-Type'])
+})
 // 🐨 do a very similar setup to the previous test
 // 🐨 create a custom config that specifies properties like "mode" of "cors" and a custom header
 // 🐨 call the client with the endpoint and the custom config
