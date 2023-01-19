@@ -1,15 +1,11 @@
 import { server, rest } from 'test/server'
 import { client } from '../api-client'
 
-// 🐨 add a beforeAll to start the server with `server.listen()`
 beforeAll(() => server.listen())
-// 🐨 add an afterAll to stop the server when `server.close()`
 afterAll(() => server.close())
-// 🐨 afterEach test, reset the server handlers to their original handlers
-// via `server.resetHandlers()`
 afterEach(() => server.restoreHandlers())
 const apiURL = process.env.REACT_APP_API_URL
-// 🐨 flesh these out:
+
 
 test('calls fetch at the endpoint with the arguments for GET requests', async () => {
   const endpoint = 'test-endpoint'
@@ -18,23 +14,22 @@ test('calls fetch at the endpoint with the arguments for GET requests', async ()
     return res(ctx.json(mockResult))
   }))
   const result = await client(endpoint)
-  console.log('result: ', result)
   expect(result).toEqual(mockResult)
 })
-// 🐨 add a server handler to handle a test request you'll be making
-// 💰 because this is the first one, I'll give you the code for how to do that.
-// const endpoint = 'test-endpoint'
-// const mockResult = {mockValue: 'VALUE'}
-// server.use(
-//   rest.get(`${apiURL}/${endpoint}`, async (req, res, ctx) => {
-//     return res(ctx.json(mockResult))
-//   }),
-// )
-//
-// 🐨 call the client (don't forget that it's asynchronous)
-// 🐨 assert that the resolved value from the client call is correct
 
-test('adds auth token when a token is provided', () => { })
+test('adds auth token when a token is provided', async () => {
+  const endpoint = 'test-endpoint'
+  const token = 'FAKE_TOKEN';
+  const mockResult = { mockValue: 'VALUE' }
+  let request
+  server.use(rest.get(`${apiURL}/${endpoint}`, async (req, res, ctx) => {
+    request = req;
+    return res(ctx.json(mockResult))
+  }))
+  await client(endpoint, { token })
+  expect(request.headers.get('Authorization')).toBe(`Bearer ${token}`)
+
+})
 // 🐨 create a fake token (it can be set to any string you want)
 // 🐨 create a "request" variable with let
 // 🐨 create a server handler to handle a test request you'll be making
