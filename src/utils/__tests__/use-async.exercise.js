@@ -64,19 +64,22 @@ test('calling run with a promise which resolves', async () => {
     run: expect.any(Function),
     reset: expect.any(Function)
   })
+  act(() => result.current.reset());
+  expect(result.current).toEqual({
+    isIdle: true,
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+    error: null,
+    status: 'idle',
+    data: null,
+    run: expect.any(Function),
+    reset: expect.any(Function)
+  })
 })
-// 🐨 get a promise and resolve function from the deferred utility
 
-// 🐨 use renderHook with useAsync to get the result
-// 🐨 assert the result.current is the correct default state
-
-// 🐨 call `run`, passing the promise
-//    (💰 this updates state so it needs to be done in an `act` callback)
-// 🐨 assert that result.current is the correct pending state
-
-// 🐨 call resolve and wait for the promise to be resolved
-//    (💰 this updates state too and you'll need it to be an async `act` call so you can await the promise)
-// 🐨 assert the resolved state
 
 // 🐨 call `reset` (💰 this will update state, so...)
 // 🐨 assert the result.current has actually been reset
