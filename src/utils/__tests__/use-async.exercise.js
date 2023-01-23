@@ -2,7 +2,19 @@
 import { renderHook, act } from '@testing-library/react'
 import { useAsync } from '../hooks'
 
-test('calling run with a promise which resolves', () => {
+
+function deferred() {
+  let resolve, reject
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  })
+  return { promise, resolve, reject }
+}
+
+
+test('calling run with a promise which resolves', async () => {
+  const { promise, resolve } = deferred()
   const { result } = renderHook(() => useAsync())
   expect(result.current).toEqual({
     isIdle: true,
@@ -17,8 +29,44 @@ test('calling run with a promise which resolves', () => {
     run: expect.any(Function),
     reset: expect.any(Function)
   })
+  let p
+  act(() => { p = result.current.run(promise) })
+  expect(result.current).toEqual({
+    isIdle: false,
+    isLoading: true,
+    isError: false,
+    isSuccess: false,
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+    error: null,
+    status: 'pending',
+    data: null,
+    run: expect.any(Function),
+    reset: expect.any(Function)
+  })
+  const resolvedValue = Symbol('resolved value')
+  await act(async () => {
+    resolve(resolvedValue)
+    await p
+  })
+
+
+  expect(result.current).toEqual({
+    isIdle: false,
+    isLoading: false,
+    isError: false,
+    isSuccess: true,
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+    error: null,
+    status: 'resolved',
+    data: resolvedValue,
+    run: expect.any(Function),
+    reset: expect.any(Function)
+  })
 })
 // 🐨 get a promise and resolve function from the deferred utility
+
 // 🐨 use renderHook with useAsync to get the result
 // 🐨 assert the result.current is the correct default state
 
