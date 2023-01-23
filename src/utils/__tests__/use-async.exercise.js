@@ -157,7 +157,25 @@ test('calling run with a promise which rejects', async () => {
 // 💰 to avoid the promise actually failing your test, you can catch
 //    the promise returned from `run` with `.catch(() => {})`
 
-test.todo('can specify an initial state')
+test('can specify an initial state', async () => {
+  const mockData = Symbol('resolved value')
+  const customInitialState = { status: 'resolved', data: mockData }
+  const { result } = renderHook(() => useAsync(customInitialState))
+  expect(result.current).toEqual({
+    isIdle: false,
+    isLoading: false,
+    isError: false,
+    isSuccess: true,
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+    error: null,
+    status: 'resolved',
+    data: mockData,
+    run: expect.any(Function),
+    reset: expect.any(Function)
+  })
+
+})
 // 💰 useAsync(customInitialState)
 
 test.todo('can set the data')
