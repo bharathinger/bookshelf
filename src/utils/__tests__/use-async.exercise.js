@@ -178,8 +178,25 @@ test('can specify an initial state', async () => {
 })
 // 💰 useAsync(customInitialState)
 
-test.todo('can set the data')
-// 💰 result.current.setData('whatever you want')
+test('can set the data', async () => {
+  const mockData = Symbol('resolved value')
+  const { result } = renderHook(() => useAsync())
+
+  act(() => result.current.setData(mockData))
+  expect(result.current).toEqual({
+    isIdle: false,
+    isLoading: false,
+    isError: false,
+    isSuccess: true,
+    setData: expect.any(Function),
+    setError: expect.any(Function),
+    error: null,
+    status: 'resolved',
+    data: mockData,
+    run: expect.any(Function),
+    reset: expect.any(Function)
+  })
+})
 
 test.todo('can set the error')
 // 💰 result.current.setError('whatever you want')
