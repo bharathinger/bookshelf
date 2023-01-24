@@ -8,15 +8,27 @@ import { AppProviders } from 'context'
 import { App } from 'app'
 
 // 🐨 after each test, clear the queryCache and auth.logout
-afterEach(() => {
-  queryCache.clear()
-  auth.logout()
-}
-)
+// afterEach(() => {
+//   queryCache.clear()
+//   auth.logout()
+// }
+// )
 
 test('renders all the book information', async () => {
+  window.localStorage.setItem(auth.localStorageKey, 'FAKE_TOKEN')
+  const originalFetch = window.fetch
+  window.fetch = async (url, config) => {
+    if (url.endsWith('/bootstrap')) {
+      return {
+        ok: true,
+        json: async () => ({ user: { username: 'Ben' }, listItems: [] })
+      }
+    }
+    return originalFetch(url, config)
+  }
   render(<App />, { wrapper: AppProviders })
   await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
   screen.debug();
 })
 // 🐨 "authenticate" the client by setting the auth.localStorageKey in localStorage to some string value (can be anything for now)
