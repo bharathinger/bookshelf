@@ -1,6 +1,6 @@
 // 🐨 here are the things you're going to need for this test:
 import * as React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
 import { queryCache } from 'react-query'
 import { buildUser, buildBook } from 'test/generate'
 import * as auth from 'auth-provider'
@@ -16,6 +16,7 @@ afterEach(() => {
 
 test('renders all the book information', async () => {
   render(<App />, { wrapper: AppProviders })
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
   screen.debug();
 })
 // 🐨 "authenticate" the client by setting the auth.localStorageKey in localStorage to some string value (can be anything for now)
