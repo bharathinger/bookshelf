@@ -1,15 +1,23 @@
 // 🐨 here are the things you're going to need for this test:
-// import * as React from 'react'
-// import {render, screen, waitFor} from '@testing-library/react'
-// import {queryCache} from 'react-query'
-// import {buildUser, buildBook} from 'test/generate'
-// import * as auth from 'auth-provider'
-// import {AppProviders} from 'context'
-// import {App} from 'app'
+import * as React from 'react'
+import { render, screen, waitFor } from '@testing-library/react'
+import { queryCache } from 'react-query'
+import { buildUser, buildBook } from 'test/generate'
+import * as auth from 'auth-provider'
+import { AppProviders } from 'context'
+import { App } from 'app'
 
 // 🐨 after each test, clear the queryCache and auth.logout
+afterEach(() => {
+  queryCache.clear()
+  auth.logout()
+}
+)
 
-test.todo('renders all the book information')
+test('renders all the book information', async () => {
+  render(<App />, { wrapper: AppProviders })
+  screen.debug();
+})
 // 🐨 "authenticate" the client by setting the auth.localStorageKey in localStorage to some string value (can be anything for now)
 
 // 🐨 create a user using `buildUser`
